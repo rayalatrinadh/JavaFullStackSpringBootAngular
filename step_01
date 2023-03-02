@@ -1,0 +1,70 @@
+need to generate componet
+    $ ng generate component login
+ ---> angular generated loginComponent
+ 
+ ===============================> 
+ import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit{
+
+  //component attributes... 
+  userName = 'trinadh';
+  password = '';
+  invalidLogin = false;
+  errorMessage = 'InvalidCredentials';
+
+  //Router
+  //Angular.giveMeRouter
+  //dependencyInjection
+  constructor(private router: Router){
+
+  }
+
+  ngOnInit(): void {
+    
+  }
+
+  //component is nothing but a class
+  //method in LoginComponent component -> event : button in html
+  handleLogin(){
+    // console.log(this.userName);
+    // console.log(this.password);
+
+    if(this.userName === 'trinadh' && this.password === 'test'){
+      this.invalidLogin = false;
+      //how to route from login component to welcome component 
+      this.router.navigate(['welcome',this.userName])
+    }else{
+      this.invalidLogin = true;
+    }
+
+
+  }
+
+}
+
+=========================================================================================================================================================================
+login.component.html
+userName : <input type = "text" name = "username" [(ngModel)] = "userName"/>
+password : <input type = "password" name = "password" [(ngModel)] = "password"/>
+
+<br>
+<!-- interpolation : {{}} -->
+<!-- userName : {{userName}} -->
+<div style="color : red">
+    <!-- ngIf <- angularDirective -->
+<small *ngIf="invalidLogin">{{errorMessage}}</small>
+</div>
+<br>
+<br>
+    <!-- created button to happen event ; this event logic build the respective component (i.e: login.component.ts) -->
+<button (click) = handleLogin()>Login</button>
+===========================================================================================================================
+
+
