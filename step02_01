@@ -1,0 +1,51 @@
+/web-services/src/main/java/com/trinadh/webServices/webservices/HomeController.java
+
+package com.trinadh.webServices.webservices;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HomeController {
+	
+	
+	@GetMapping(path = "/hello-world")
+	public String helloWorld() {
+		return "hello world get mapping";
+	}
+
+	
+	@GetMapping(path = "/hello-world-bean")
+	public HelloWorldBean helloworldBean() {
+		return new HelloWorldBean();
+	}
+}
+------------------------------------------------------------------------------------
+/web-services/src/main/java/com/trinadh/webServices/webservices/HelloWorldBean.java
+
+package com.trinadh.webServices.webservices;
+
+public class HelloWorldBean {
+  private String message = "trinadh";
+  public HelloWorldBean() {
+		
+	}
+
+public HelloWorldBean(String message) {
+	this.message = message;
+}
+
+public String getMessage() {
+	return message;
+}
+
+@Override
+public String toString() {
+	return String.format("HelloWorldBean [message=%s]", message);
+}
+
+
+  
+}
+
+------------------------------------------------------------------------------------------
