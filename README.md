@@ -24,3 +24,7 @@ Learnings
 1)how to create a table in component and then how can we display in html
 2)how can we create a table using angular class 
 3)ngFor angular directive implemented in .html (ngFor only <tr><td></td></tr>)
+******************************************************************************************************
+                          check this Revision:
+                          JavaFullStackSpringBootAngular/step_04
+******************************************************************************************************
