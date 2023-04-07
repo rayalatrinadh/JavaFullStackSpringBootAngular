@@ -1,0 +1,325 @@
+{path : '',component : LoginComponent},
+  {path :'login',component : LoginComponent},
+  {path : 'welcome/:name', component : WelcomeComponent, canActivate:[RouteGuardServiceService]},  //passing params welcome/:name
+  {path : 'todos', component : ListTodosComponent, canActivate:[RouteGuardServiceService]},
+  {path: 'logout', component : LogoutComponent, canActivate:[RouteGuardServiceService]},
+  ------------------------------------------------------------------------------------------------------------------------------------
+  
+relative Path :  src\app\login
+ path: D:\javaFullStackProjectWithAngular\frontend\todo\src\app\login
+ 
+ src\app\login\login.component.html
+ <h1>Login!</h1>
+
+<div class = "container">
+    <div calss = "alert alert-warning" *ngIf="invalidLogin">{{errorMessage}}</div>
+
+<div>
+userName : <input type = "text" name = "username" [(ngModel)] = "userName"/>  
+<!-- [{bananaInBox}] -->
+password : <input type = "password" name = "password" [(ngModel)] = "password"/>
+
+<button (click) = handleLogin() class = "btn btn-success">Login</button>
+</div>
+</div>
+
+------------------------------------------------------------
+src\app\login\login.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { HardcodedAuthenticationService } from '../service/hardcoded-authentication.service';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit{
+
+  //component attributes... 
+  userName = 'trinadh';
+  password  = '';
+  invalidLogin = false;
+  errorMessage = 'InvalidCredentials';
+
+  //Router
+  //Angular.giveMeRouter
+  //dependencyInjection
+  constructor(
+    private router: Router,
+    private hardCodedAuthenticationService : HardcodedAuthenticationService         
+    ){
+
+  }
+
+  ngOnInit(): void {
+    
+  }
+
+  //component is nothing but a class
+  //method in LoginComponent component -> event : button in html
+  handleLogin(){
+
+   // if(this.userName === 'trinadh' && this.password === 'test'){
+    if(this.hardCodedAuthenticationService.authenticate(this.userName,this.password)){
+      this.invalidLogin = false;
+      //how to route from login component to welcome component 
+      this.router.navigate(['welcome',this.userName])
+    }else{
+      this.invalidLogin = true;
+    }
+
+
+  }
+
+}
+-------------------------------------------------------------------
+src\app\logout
+
+src\app\logout\logout.component.html
+<h1>You are logged out</h1>
+<div class = "container">
+    Thank you for using our application..!
+</div>
+-----------------------------------
+src\app\logout\logout.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { HardcodedAuthenticationService } from '../service/hardcoded-authentication.service';
+
+@Component({
+  selector: 'app-logout',
+  templateUrl: './logout.component.html',
+  styleUrls: ['./logout.component.css']
+})
+export class LogoutComponent implements OnInit{
+  constructor(private hardcodedAuthenticationService : HardcodedAuthenticationService){
+
+  }
+
+  ngOnInit(): void {
+    this.hardcodedAuthenticationService.loggedOut();
+  }
+
+}
+
+----------------------------------------------------------------------------------------
+src\app\menu
+src\app\menu\menu.component.html
+
+<header>
+    <nav class = "navbar navbar-expand-md navbar-dark bg-dark">
+        <div>
+            <a href = "www.w3schools.com" class = "navbar-brand"> w3schools</a>
+        </div>
+
+        <ul class = "navbar-nav">
+            <li> 
+                <a *ngIf ="this.hardcodedAuthenticationService.isUserLoggedIn()" routerLink = "/welcome/trinadh" class = "nav-link">Home</a>
+            </li>
+            <li>
+                <a *ngIf ="this.hardcodedAuthenticationService.isUserLoggedIn()" routerLink = "/todos" class = "nav-link"> Todos</a>
+            </li>
+        </ul>
+
+        <ul class ="navbar-nav navbar-collapse justify-content-end" >
+            <li>
+                <a *ngIf ="!this.hardcodedAuthenticationService.isUserLoggedIn()" routerLink = "/login" class = "nav-link"> Login</a>
+            </li>
+            <li>
+                <a *ngIf ="this.hardcodedAuthenticationService.isUserLoggedIn()" routerLink = "/logout" class = "nav-link">Logout</a>
+            </li>
+        </ul>
+    </nav> 
+</header>
+
+-----------------------------------------------------
+src\app\menu\menu.component.ts
+import { Component, OnInit } from '@angular/core';
+import { HardcodedAuthenticationService } from '../service/hardcoded-authentication.service';
+
+@Component({
+  selector: 'app-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.css']
+})
+export class MenuComponent implements OnInit{
+  //isUserLoggedIn : boolean = false;
+
+  constructor(public hardcodedAuthenticationService : HardcodedAuthenticationService){
+
+  }
+
+  ngOnInit(){
+       //this.isUserLoggedIn =  this.hardcodedAuthenticationService.isUserLoggedIn();
+  }
+
+}
+------------------------------------------------------------------------------------------------
+import { Component, OnInit } from '@angular/core';
+import { HardcodedAuthenticationService } from '../service/hardcoded-authentication.service';
+
+@Component({
+  selector: 'app-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.css']
+})
+export class MenuComponent implements OnInit{
+  //isUserLoggedIn : boolean = false;
+
+  constructor(public hardcodedAuthenticationService : HardcodedAuthenticationService){
+
+  }
+
+  ngOnInit(){
+       //this.isUserLoggedIn =  this.hardcodedAuthenticationService.isUserLoggedIn();
+  }
+
+}
+-----------------------------------------------------------------
+src\app\welcome
+src\app\welcome\welcome.component.html
+<h1>Welcome!</h1>
+
+
+<div class = "container">
+    welcome {{name}},you can manage your todos <a routerLink = '/todos'>here</a>
+</div>
+
+--------------------
+src\app\welcome\welcome.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+//import {AppComponent} from '../app.component'
+
+@Component({
+  selector: 'app-welcome',
+  templateUrl: './welcome.component.html',
+  styleUrls: ['./welcome.component.css']
+})
+//export is like a public modifier in java 
+//created a welcome component 
+export class WelcomeComponent implements OnInit{
+  
+  //declare component variables with initialization.
+  message : string = "hello trinadh how are you";
+  name = '';
+
+
+//constructon
+//in angular constructor variables available at component level. no need to declare local like this.val = val
+  constructor(private route : Router,private route1 : ActivatedRoute){
+
+
+  }
+
+  // ngOnInit():void{}
+  ngOnInit() {  
+    console.log(this.message);
+    this.name =  this.route1.snapshot.params['name']
+    console.log('name : ' ,this.name)
+  }
+
+
+  // goHome(){
+  //       this.route.navigate(['login'])
+  // }
+
+
+}
+
+//if you want, u can create n number of classes 
+export class Test1{
+
+}
+
+export class Test2{
+
+
+}
+
+export class Test3{
+
+}
+
+export class Test4{
+
+
+}
+--------------------------------------
+src\app\app-routing.module.ts
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ErrorComponent } from './error/error.component';
+import { ListTodosComponent } from './list-todos/list-todos.component';
+import { LoginComponent } from './login/login.component';
+import { LogoutComponent } from './logout/logout.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { RouteGuardServiceService } from './service/route-guard-service.service';
+
+const routes: Routes = [
+  //need to add path for every component to navigate to the required component
+  {path : '',component : LoginComponent},
+  {path :'login',component : LoginComponent},
+  {path : 'welcome/:name', component : WelcomeComponent, canActivate:[RouteGuardServiceService]},  //passing params welcome/:name
+  {path : 'todos', component : ListTodosComponent, canActivate:[RouteGuardServiceService]},
+  {path: 'logout', component : LogoutComponent, canActivate:[RouteGuardServiceService]},
+
+
+  {path: '**', component : ErrorComponent} //note by trinadh : error path should be at  ** last** 
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+
+
+
+-------------------------------------------------------------------------------------
+src\app\app.component.html
+
+<!-- app menu is the selector of menu.component.html from menu.component.ts -->
+<app-menu></app-menu>
+
+
+<router-outlet></router-outlet> 
+
+
+<!-- app footer is the selector of footer.component.html from footer.component.ts -->
+<app-footer></app-footer>
+
+----------------------------------------------------------------------------------------------------
+
+src\app\app.component.ts
+
+
+
+import { Component } from '@angular/core';
+
+
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',  //edited by RT
+ // template : '<h1>welcome trinadh {{title}}</h1>',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'todo';
+  welcomeMsg = "welcome to Angular";
+}
+ 
+ 
+ -------------------------------------------------------------------------------
+ 
+ 
+ 
+ 
+ 
+ 
+ 
